@@ -1,12 +1,58 @@
-import userModel from "../models/user";
-import { IError } from "../types/IError";
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 
 const calendar = google.calendar("v3");
 
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;  //credentials you can get from google console
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ;
+
+
+
+// problem {
+// 	_id: Types.ObjectId;
+// 	setName: string;
+// 	userId: Types.ObjectId;
+// 	startTime: Date;
+// 	endTime: Date;
+// 	calendarEventId:string;
+// }
+
+
+// user model based on the below schema
+
+// user {
+// 	email: string;
+// 	name: string;
+// 	profileImage: string;
+// 	access_token: string;
+// 	refresh_token: string;
+// }
+
+
+
+// export class IError extends Error {
+// 	code: number;
+// 	text: string;
+// 	constructor(text: string, code: number) {
+// 		super();
+// 		this.text = text;
+// 		this.code = code;
+// 	}
+// }
+
+
+// scopes required are:
+
+// 'https://www.googleapis.com/auth/userinfo.profile',
+// 'https://www.googleapis.com/auth/userinfo.email',
+// 'https://www.googleapis.com/auth/calendar.readonly', (not necessary)
+// 'https://www.googleapis.com/auth/calendar',  (not necessary)
+// 'https://www.googleapis.com/auth/calendar.events.readonly',
+// 'https://www.googleapis.com/auth/calendar.events'
+
+
+
 
 export const addEventInCalendar = async (problem:any) => {
   try {
@@ -44,9 +90,10 @@ export const addEventInCalendar = async (problem:any) => {
       requestBody: event,
     });
 
-    const data = result.data;
+    const eventId = result.data.id;
 
-    return data.id;
+    return eventId;
+    
   } catch (error) {
     console.log(error);
   }
@@ -83,6 +130,7 @@ export const RescheduleEventInCalendar = async (problem:any) => {
 
     const auth = new OAuth2Client(CLIENT_ID, CLIENT_SECRET);
 
+    //the refresh token is generated during authorization of user 
     auth.setCredentials({
       refresh_token: user?.refresh_token,
     });
